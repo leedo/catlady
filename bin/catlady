@@ -1,0 +1,19 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use FindBin;
+use Catlady;
+use AnyEvent::Debug;
+
+#open STDERR, ">>", "/home/leedo/logs/catlady_errors.log";
+#open STDOUT, ">>", "/home/leedo/logs/catlady.log";
+
+if (-e "$FindBin::Bin/../var/shell.sock") {
+  die "debug socket exists!";
+}
+
+our $SHELL = AnyEvent::Debug::shell "unix/", "$FindBin::Bin/../var/shell.sock";
+our $catlady = Catlady->new_with_options();
+$catlady->run;

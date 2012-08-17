@@ -1,0 +1,5 @@
+<pre>
+  git clone git@github.com:leedo/alice.git
+  git clone git@github.com:leedo/catlady.git
+  cd catlady
+  ln -s ../alice/share .

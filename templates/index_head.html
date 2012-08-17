@@ -1,0 +1,28 @@
+? my ($app, @windows) = @_;
+? my $titlewin = @windows > 1 ? $windows[1] : $windows[0];
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><?= $titlewin->title ?></title>
+    <script type="text/javascript" src="<?= $app->static_url("alice.js") ?>?v=21"></script>
+    <link rel="shortcut icon" href="<?= $app->static_url("favicon.ico") ?>">
+    <link type="text/css" rel="stylesheet" href="<?= $app->static_url("alice-".$app->config->style.".css") ?>?v=12" />
+    <link type="text/css" rel="stylesheet" href="https://noembed.com/noembed.css" />
+    <link rel="apple-touch-icon" href="<?= $app->static_url("image/alice.png") ?>" />
+    <link rel="apple-touch-startup-image" href="<?= $app->static_url("image/alice.png") ?>" />
+    <link rel="chrome-application-definition" href="/static/application_definition.json">
+    <script type="text/javascript">if (window.chrome && !window.chrome.app.isInstalled) window.chrome.app.install();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+  </head>
+  <body>
+    <img style="position:absolute;top:-100px;left:-100px" src="<?= $app->static_url("image/sprites.png") ?>?v=5" />
+
+    <div class="dropdown top" id="config_menu">
+      <?= $_mt->render_file("alice_menu.html", $app) ?>
+    </div>
+
+    <div id="topic">No topic set.</div>
+    <div id="windows" class="compact-scroll">
+      <div id="nicklist_toggle"></div>

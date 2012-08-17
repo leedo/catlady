@@ -1,0 +1,3 @@
+#!/bin/sh
+
+socat 'readline,history=.anyevent-history' ./var/shell.sock
