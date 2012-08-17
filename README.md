@@ -7,5 +7,5 @@ that really matters is `users`, users should go in there.
   cd catlady
   ln -s ../alice/share .
   mkdir -p etc/users var
-  ./bin/catlady
+  perl -Ilib -I../alice/lib bin/catlady
 </pre>
