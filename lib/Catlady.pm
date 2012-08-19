@@ -3,9 +3,10 @@ package Catlady;
 use strict;
 use warnings;
 
-use 5.010;
+use v5.10;
 
-use AnyEvent::Strict;
+use Alice;
+use AnyEvent;
 use AnyEvent::DBI::Abstract;
 use List::Util qw/shuffle/;
 use Catlady::HTTPD;
@@ -14,16 +15,10 @@ use Text::MicroTemplate::File;
 use FindBin;
 use Any::Moose;
 
-has configs => (
-  is => 'ro',
-  required => 1,
-  default => "$FindBin::Bin/../etc/users",
-);
-
 has [qw/
       salt secret cookie domain db_user db_pass dsn
       port address db_attr default_server static_prefix
-      image_prefix
+      image_prefix configs
     /] => (
   is => 'ro',
   required => 1,
@@ -31,7 +26,6 @@ has [qw/
 
 has dbi => (
   is => 'ro',
-  isa => 'AnyEvent::DBI',
   lazy => 1,
   default => sub {
     my $self = shift;
@@ -48,8 +42,7 @@ has dbi => (
 );
 
 has cats => (
-  is => 'rw',
-  isa => 'HashRef[Alice]',
+  is => 'ro',
   default => sub {{}},
 );
 
@@ -78,7 +71,7 @@ has httpd => (
   lazy => 1,
   default => sub {
     my $self = shift;
-    print STDERR "listening on port ".$self->port."\n";
+    AE::log info => "listening on port ".$self->port;
     Catlady::HTTPD->new(
       address => $self->address,
       port => $self->port,
@@ -93,7 +86,7 @@ has timestamps => (
   default => sub {{}},
 );
 
-has 'template' => (
+has template => (
   is => 'ro',
   lazy => 1,
   default => sub {
@@ -148,7 +141,7 @@ sub start_murder_timer {
 
         for my $row (@$rows) {
           my ($username) = @$row;
-          print STDERR "$username is idle... shutting down\n";
+          AE::log info => "$username is idle... shutting down";
           $self->murder_cat($username);
         }
       });
@@ -158,7 +151,7 @@ sub start_murder_timer {
 
 sub revive_cats {
   my $self = shift;
-  print STDERR "reviving cats using configs in ".$self->configs."\n";
+  AE::log info => "reviving cats using configs in ".$self->configs;
   $self->dbi->select('users', [qw/username id/], {disabled => 0}, sub {
     my ($dbh, $rows, $rv) = @_;
 
@@ -184,7 +177,7 @@ sub revive_cats {
 sub murder_cat {
   my ($self, $user) = @_;
   if (my $alice = $self->get_cat($user)) {
-    print STDERR "murdering $user\'s cat\n";
+    AE::log info => "murdering $user\'s cat";
     $alice->init_shutdown(sub{$self->remove_cat($user)});
     $self->dbi->update('users', {disabled => 1}, {id => $alice->user}, sub {});
     delete $self->timestamps->{$alice->user};
@@ -194,15 +187,22 @@ sub murder_cat {
 sub revive_cat {
   my ($self, $user, $userid, $cb) = @_;
 
-  die "need user and userid to revive user" unless $user and $userid;
-  die "$user cat is already alive" if $self->get_cat($user);
+  if (!$user or !$userid) {
+    AE::log error => "need user and userid to revive user";
+    return;
+  }
 
-  say "reviving $user\'s cat";
+  if ($self->get_cat($user)) {
+    AE::log error => "$user cat is already alive";
+    return;
+  }
+
+  AE::log info => "reviving $user\'s cat";
 
   Alice::Config->new(
     path       => $self->config($user),
-    static_prefix => "https://static.usealice.org/",
-    image_prefix => "https://noembed.com/i/",
+    static_prefix => $self->static_prefix,
+    image_prefix => $self->image_prefix,
     auth       => {user => $user, pass => "dummy"}, # auth->{user} is needed elsewhere :(
   )->load(sub {
     my $config = shift;
@@ -241,14 +241,14 @@ sub run {
   $self->{cv}->recv;
 
   $self->shutdown;
-  print STDERR "shutdown complete\n";
+  AE::log info => "shutdown complete";
   exit 0;
 }
 
 sub shutdown {
   my ($self, $msg) = @_;
 
-  print STDERR "shutting down\n";
+  AE::log info => "shutting down";
 
   return unless $self->has_cats;
 
@@ -256,19 +256,19 @@ sub shutdown {
   my $cv = AE::cv;
 
   for my $name ($self->cat_names) {
-    print STDERR " shutting down $name\n";
+    AE::log info => "shutting down $name";
 
     $cv->begin;
 
     my $t = AE::timer 6, 0, sub {
-      print STDERR "  force shut down $name\n";
+      AE::log warn => "force shut down $name";
       $self->remove_cat($name);
       $cv->end;
     };
     push @timers, $t;
 
     $self->get_cat($name)->init_shutdown(sub {
-      print STDERR "  shut down $name\n";
+      AE::log info => "shut down $name";
       undef $t;
       $self->remove_cat($name);
       $cv->end;
@@ -290,13 +290,13 @@ sub summon_cat {
           $self->revive_cat($user, $userid);
         }
         else {
-          say STDERR "$owner isn't in the database";
+          AE::log warn => "$owner isn't in the database";
         }
       }
     );
   }
   else {
-    say STDERR "$owner already has a cat running";
+    AE::log warn => "$owner already has a cat running";
   }
 }
 

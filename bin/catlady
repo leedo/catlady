@@ -5,14 +5,15 @@ use warnings;
 
 use FindBin;
 use Catlady;
+use AnyEvent::Log;
 use AnyEvent::Debug;
-
-#open STDERR, ">>", "/home/leedo/logs/catlady_errors.log";
-#open STDOUT, ">>", "/home/leedo/logs/catlady.log";
 
 if (-e "$FindBin::Bin/../var/shell.sock") {
   die "debug socket exists!";
 }
+
+$AnyEvent::Log::FILTER->level("info");
+$AnyEvent::Log::COLLECT->attach(AnyEvent::Log::Ctx->new(level => "info"));
 
 use JSON::XS;
 
