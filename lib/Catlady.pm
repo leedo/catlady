@@ -229,7 +229,10 @@ sub revive_cat {
     );
 
     if ($alice->config->first_run) {
-      $alice->config->servers({alice => $self->default_server($user)});
+      my %default = %{ $self->default_server };
+      $default{autoconnect} = "on";
+      $default{nick} = $user;
+      $alice->config->servers({$default{name} => \%default});
     }
 
     $self->dbi->update('users', {disabled => 0}, {id => $userid}, sub {});
@@ -316,14 +319,6 @@ sub summon_cat {
 sub config {
   my ($self, $owner) = @_;
   dir($self->configs)->stringify . "/$owner";
-}
-
-sub default_server {
-  my ($self, $owner) = @_;
-  my %server = %{ $self->default_server };
-  $server{owner} = $owner;
-  $server{autoconnect} = "on";
-  return \%server;
 }
 
 __PACKAGE__->meta->make_immutable;
