@@ -23,7 +23,7 @@ has configs => (
   default => "$FindBin::Bin/../etc/users",
 );
 
-has [qw/salt secret cookie domain db_user db_pass dsn/] => (
+has [qw/salt secret cookie domain db_user db_pass dsn port address db_attr/] => (
   is => 'ro',
   required => 1,
 );
@@ -36,10 +36,12 @@ has dbi => (
     my $self = shift;
     my $dbi = AnyEvent::DBI::Abstract->new(
       $self->dsn, $self->db_user, $self->db_pass,
-      AutoCommit => 1, PrintError => 1, exec_server => 1, mysql_enable_utf8 => 1, mysql_auto_reconnect => 1,
+      AutoCommit => 1, PrintError => 1, %{ $self->db_attr },
     );
-    $dbi->attr("mysql_auto_reconnect", 1, sub {});
-    $dbi->attr("mysql_enable_utf8", 1, sub {});
+    for my $attr (keys %{$self->db_attr}) {
+      next if $attr eq "exec_server";
+      $dbi->attr($attr, $self->db_attr->{$attr}, sub {});
+    }
     return $dbi;
   }
 );
@@ -88,18 +90,12 @@ has httpd => (
     my $self = shift;
     print STDERR "listening on port ".$self->port."\n";
     Catlady::HTTPD->new(
-      address => '0.0.0.0',
+      address => $self->address,
       port => $self->port,
       catlady => $self,
       assets => "$FindBin::Bin/../share/",
     );
   }
-);
-
-has port => (
-  is => 'rw',
-  isa => 'Str',
-  default => 9000,
 );
 
 has timestamps => (
@@ -258,7 +254,6 @@ sub run {
 
   $self->httpd;
   $self->revive_cats;
-  $self->listen;
 
   $self->{cv}->recv;
 
@@ -298,43 +293,6 @@ sub shutdown {
     }, $msg);
   }
   $cv->recv;
-}
-
-sub listen {
-  my $self = shift;
-  tcp_server "unix/", $self->sock, sub {
-    my ($fh, $host, $port) = @_;
-    my $handle;
-    $handle = AnyEvent::Handle->new(fh => $fh, on_eof => sub{$handle->destroy});
-    $handle->push_read(line => sub {
-      my (undef, $line) = @_; 
-      my ($command, @args) = split /\s+/, $line;
-      my $ret = "nothing";
-      given ($command) {
-        when ('summon') {
-          $self->summon_cat($args[0]);
-          $ret = 'livecat';
-        }
-        when ('murder') {
-          $self->murder_cat($args[0]);
-          $ret = 'dedcat';
-        }
-        when ('shutdown') {
-          $self->shutdown(join " ", @args);
-          $ret = 'shutdown';
-        }
-        when ('alert') {
-          for ($self->all_cats) {
-            $_->alert(join " ", @args);
-          }
-          $ret = 'alerted';
-        }
-      }
-      $handle->push_write("$ret\015\012");
-      $handle->on_drain(sub{undef $handle});
-    });
-  };
-  say STDERR "herding cats on ".$self->sock;
 }
 
 sub summon_cat {
