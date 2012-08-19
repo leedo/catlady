@@ -12,5 +12,11 @@
     "mysql_auto_reconnect": 1
   },
   "db_user": "changeme",
-  "db_pass": "changeme"
+  "db_pass": "changeme",
+  "default_server":  {
+    "name": "alice",
+    "host": "irc.usealice.org",
+    "port": 6767,
+    "channels": ["#alice"],
+  }
 }

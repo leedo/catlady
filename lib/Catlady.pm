@@ -23,7 +23,10 @@ has configs => (
   default => "$FindBin::Bin/../etc/users",
 );
 
-has [qw/salt secret cookie domain db_user db_pass dsn port address db_attr/] => (
+has [qw/
+      salt secret cookie domain db_user db_pass dsn
+      port address db_attr default_server
+    /] => (
   is => 'ro',
   required => 1,
 );
@@ -139,14 +142,6 @@ sub start_idle_timer {
       }
     }
   };
-}
-
-sub reload_module {
-  my ($self, $module) = @_;
-  my @path = split /::/, $module;
-  delete $INC{join("/", @path). ".pm"};
-  require $module;
-  $module->import;
 }
 
 sub start_murder_timer {
@@ -325,14 +320,10 @@ sub config {
 
 sub default_server {
   my ($self, $owner) = @_;
-  {
-    name => "alice",
-    host => "irc.usealice.org",
-    port => 6767,
-    nick => $owner,
-    autoconnect => "on",
-    channels => ["#alice"],
-  }
+  my %server = %{ $self->default_server };
+  $server{owner} = $owner;
+  $server{autoconnect} = "on";
+  return \%server;
 }
 
 __PACKAGE__->meta->make_immutable;
