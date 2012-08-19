@@ -18,7 +18,7 @@ use Any::Moose;
 has [qw/
       salt secret cookie domain db_user db_pass dsn
       port address db_attr default_server static_prefix
-      image_prefix configs
+      image_prefix configs sharedir
     /] => (
   is => 'ro',
   required => 1,
@@ -76,7 +76,7 @@ has httpd => (
       address => $self->address,
       port => $self->port,
       catlady => $self,
-      assets => "$FindBin::Bin/../share/",
+      assets => $self->sharedir,
     );
   }
 );
@@ -90,10 +90,11 @@ has template => (
   is => 'ro',
   lazy => 1,
   default => sub {
+    my $self = shift;
     Text::MicroTemplate::File->new(
       include_path =>  [
         "$FindBin::Bin/../templates",
-        "$FindBin::Bin/../share/templates",
+        $self->sharedir . "/templates",
       ],
       cache => 1,
     );

@@ -6,7 +6,7 @@ that really matters is `users`, users should go in there.
   git clone git@github.com:leedo/catlady.git
   cd catlady
   ln -s ../alice/share .
-  mkdir -p etc/users var
+  mkdir -p etc/users
   vim config.json
   perl -Ilib -I../alice/lib bin/catlady config.json
 </pre>

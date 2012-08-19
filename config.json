@@ -2,6 +2,8 @@
   "static_prefix": "/static/",
   "image_prefix": "",
   "configs": "./etc/users",
+  "shell_sock": "./shell.sock",
+  "sharedir": "./share",
   "port": 9000,
   "address": "0.0.0.0",
   "salt": "changme",

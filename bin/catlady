@@ -8,10 +8,6 @@ use Catlady;
 use AnyEvent::Log;
 use AnyEvent::Debug;
 
-if (-e "$FindBin::Bin/../var/shell.sock") {
-  die "debug socket exists!";
-}
-
 $AnyEvent::Log::FILTER->level("info");
 $AnyEvent::Log::COLLECT->attach(AnyEvent::Log::Ctx->new(level => "info"));
 
@@ -23,6 +19,9 @@ my $config = do {
   decode_json <$fh>;
 };
 
-our $SHELL = AnyEvent::Debug::shell "unix/", "$FindBin::Bin/../var/shell.sock";
+if ($config->{shell_sock}) {
+  our $SHELL = AnyEvent::Debug::shell "unix/", $config->{shell_sock};
+}
+
 our $catlady = Catlady->new(%$config);
 $catlady->run;
