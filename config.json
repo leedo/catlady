@@ -1,6 +1,6 @@
 {
-  "static_prefix" => "/static/",
-  "image_prefix" => "",
+  "static_prefix": "/static/",
+  "image_prefix": "",
   "port": 9000,
   "address": "0.0.0.0",
   "salt": "changme",
