@@ -5,9 +5,6 @@ use warnings;
 
 use 5.010;
 
-use constant DB_USER => "usealice";
-use constant DB_PASS => "usealice";
-
 use AnyEvent::Strict;
 use AnyEvent::Socket;
 use AnyEvent::Handle;
@@ -19,8 +16,6 @@ use Text::MicroTemplate::File;
 use FindBin;
 use Any::Moose;
 
-with any_moose 'X::Getopt';
-
 has configs => (
   is => 'rw',
   isa => 'Str',
@@ -28,15 +23,9 @@ has configs => (
   default => "$FindBin::Bin/../etc/users",
 );
 
-has dsn => (
+has [qw/salt secret cookie domain db_user db_pass dsn/] => (
   is => 'ro',
-  default => sub {
-    [
-      "DBI:mysql:dbname=usealice;host=localhost;port=3306;mysql_auto_reconnect=1;mysql_enable_utf8=1",
-      DB_USER, DB_PASS,
-      AutoCommit => 1, PrintError => 1, exec_server => 1, mysql_enable_utf8 => 1, mysql_auto_reconnect => 1,
-    ];
-  }
+  required => 1,
 );
 
 has dbi => (
@@ -45,7 +34,10 @@ has dbi => (
   lazy => 1,
   default => sub {
     my $self = shift;
-    my $dbi = AnyEvent::DBI::Abstract->new(@{$self->dsn});
+    my $dbi = AnyEvent::DBI::Abstract->new(
+      $self->dsn, $self->db_user, $self->db_pass,
+      AutoCommit => 1, PrintError => 1, exec_server => 1, mysql_enable_utf8 => 1, mysql_auto_reconnect => 1,
+    );
     $dbi->attr("mysql_auto_reconnect", 1, sub {});
     $dbi->attr("mysql_enable_utf8", 1, sub {});
     return $dbi;
@@ -207,7 +199,6 @@ sub revive_cats {
       my ($user, $userid) = @$row;
 
       return if $self->get_cat($user);
-      return unless -e $self->config($user);
 
       $self->revive_cat($user, $userid);
     };

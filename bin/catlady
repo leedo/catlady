@@ -14,6 +14,14 @@ if (-e "$FindBin::Bin/../var/shell.sock") {
   die "debug socket exists!";
 }
 
+use JSON::XS;
+
+my $config = do {
+  local $/;
+  open my $fh, '<', $ARGV[0] or die "need config file";
+  decode_json <$fh>;
+};
+
 our $SHELL = AnyEvent::Debug::shell "unix/", "$FindBin::Bin/../var/shell.sock";
-our $catlady = Catlady->new_with_options();
+our $catlady = Catlady->new(%$config);
 $catlady->run;

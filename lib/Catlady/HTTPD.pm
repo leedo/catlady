@@ -10,11 +10,6 @@ use Plack::Session::Store::Cache;
 use Plack::Session::State::Cookie;
 use Any::Moose;
 
-use constant SALT => "changeme";
-use constant SECRET => "changeme";
-use constant COOKIE => "usealice";
-use constant DOMAIN => ".usealice.org";
-
 extends 'Alice::HTTP::Server';
 
 has catlady => (
@@ -66,9 +61,9 @@ sub _build_app {
     enable "Static", path => qr{^/static/}, root => $self->assets;
     enable "ReverseProxy";
     enable "Session::Cookie",
-      secret => SECRET,
-      session_key => COOKIE,
-      domain => DOMAIN,
+      secret => $self->catlady->secret,
+      session_key => $self->catlady->cookie,
+      domain => $self->catlady->domain,
       expires => $expires,
     ;
     enable "+Alice::HTTP::WebSocket";
@@ -88,7 +83,7 @@ sub authenticate {
   $user ||= "";
   $pass ||= "";
 
-  $pass = sha1_hex "$pass-" . SALT;
+  $pass = sha1_hex "$pass-" . $self->catlady->salt;
 
   $self->catlady->dbi->select('users', [qw/id/],
     {username => $user, password => $pass},

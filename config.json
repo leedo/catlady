@@ -1,0 +1,9 @@
+{
+  "salt": "changme",
+  "secret": "changeme",
+  "domain": ".changeme.com", 
+  "cookie": "changeme",
+  "dsn": "DBI:mysql:dbname=usealice;host=localhost;port=3306;mysql_auto_reconnect=1;mysql_enable_utf8=1",
+  "db_user": "changeme",
+  "db_pass": "changeme"
+}
