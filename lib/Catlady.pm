@@ -6,8 +6,6 @@ use warnings;
 use 5.010;
 
 use AnyEvent::Strict;
-use AnyEvent::Socket;
-use AnyEvent::Handle;
 use AnyEvent::DBI::Abstract;
 use List::Util qw/shuffle/;
 use Catlady::HTTPD;
@@ -46,16 +44,6 @@ has dbi => (
       $dbi->attr($attr, $self->db_attr->{$attr}, sub {});
     }
     return $dbi;
-  }
-);
-
-has sock => (
-  is => 'ro',
-  isa => 'Str',
-  default => sub {
-    my $sock = "./var/control.sock";
-    die "sock file exists\n" if -e $sock;
-    return $sock;
   }
 );
 
@@ -264,7 +252,6 @@ sub shutdown {
   my ($self, $msg) = @_;
 
   print STDERR "shutting down\n";
-  unlink $self->sock;
 
   return unless $self->has_cats;
 
