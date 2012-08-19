@@ -15,15 +15,15 @@ use FindBin;
 use Any::Moose;
 
 has configs => (
-  is => 'rw',
-  isa => 'Str',
+  is => 'ro',
   required => 1,
   default => "$FindBin::Bin/../etc/users",
 );
 
 has [qw/
       salt secret cookie domain db_user db_pass dsn
-      port address db_attr default_server
+      port address db_attr default_server static_prefix
+      image_prefix
     /] => (
   is => 'ro',
   required => 1,
@@ -75,7 +75,6 @@ sub connected_users {
 
 has httpd => (
   is => 'ro',
-  isa => 'Catlady::HTTPD',
   lazy => 1,
   default => sub {
     my $self = shift;
@@ -91,13 +90,11 @@ has httpd => (
 
 has timestamps => (
   is => 'rw',
-  isa => 'HashRef',
   default => sub {{}},
 );
 
 has 'template' => (
   is => 'ro',
-  isa => 'Text::MicroTemplate::File',
   lazy => 1,
   default => sub {
     Text::MicroTemplate::File->new(
