@@ -192,10 +192,11 @@ sub revive_cat {
   AE::log info => "reviving $user\'s cat";
 
   Alice::Config->new(
-    path       => $self->config($user),
+    path          => $self->config($user),
+    assetdir      => $self->sharedir,
     static_prefix => $self->static_prefix,
-    image_prefix => $self->image_prefix,
-    auth       => {user => $user, pass => "dummy"}, # auth->{user} is needed elsewhere :(
+    image_prefix  => $self->image_prefix,
+    auth          => {user => $user, pass => "dummy"}, # auth->{user} is needed elsewhere :(
   )->load(sub {
     my $config = shift;
     my $alice = Alice->new(
