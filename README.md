@@ -1,5 +1,6 @@
-Create a new database using `usealice.sql`. The only table
-that really matters is `users`, users should go in there.
+Create a new database using the provided SQL.
+
+Setup catlady:
 
 <pre>
   git clone https://github.com/leedo/catlady.git
@@ -11,5 +12,11 @@ that really matters is `users`, users should go in there.
   mkdir users
   cp config.example.js config.json
   vim config.json
+  perl -Ilib -Ialice/lib bin/catlady config.json
+</pre>
+
+Run the catlady:
+
+<pre>
   perl -Ilib -Ialice/lib bin/catlady config.json
 </pre>
