@@ -3,7 +3,7 @@ that really matters is `users`, users should go in there.
 
 <pre>
   git clone https://github.com/leedo/alice.git
-  cd alice cpanm -S -n --installdeps .
+  cpanm -S -n --installdeps ./alice
   git clone https://github.com/leedo/catlady.git
   cd catlady
   cpanm -S -n Digest::SHA1 Plack::Middleware::ReverseProxy Plack::Session AnyEvent::DBI::Abstract Path::Class Digest::HMAC
