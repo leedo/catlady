@@ -19,3 +19,7 @@ Run the catlady:
 <pre>
   perl -Ilib -Ialice/lib bin/catlady config.json
 </pre>
+
+Any templates from `alice/share/templates` can be overridden copying to
+`templates`. This can be useful for making your own dropdown menu items
+or login screen.
