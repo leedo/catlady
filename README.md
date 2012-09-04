@@ -12,7 +12,6 @@ Setup catlady:
   mkdir users
   cp config.example.js config.json
   vim config.json
-  perl -Ilib -Ialice/lib bin/catlady config.json
 </pre>
 
 Run the catlady:
