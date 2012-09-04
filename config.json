@@ -6,6 +6,7 @@
   "sharedir": "./share",
   "port": 9000,
   "address": "0.0.0.0",
+  "idle_limit": 604800,
   "salt": "changme",
   "secret": "changeme",
   "domain": ".changeme.com", 

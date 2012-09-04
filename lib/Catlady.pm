@@ -18,7 +18,7 @@ use Any::Moose;
 has [qw/
       salt secret cookie domain db_user db_pass dsn
       port address db_attr default_server static_prefix
-      image_prefix configs sharedir
+      image_prefix configs sharedir idle_limit
     /] => (
   is => 'ro',
   required => 1,
@@ -127,26 +127,17 @@ sub start_murder_timer {
   my $self = shift;
   # check every hour for alices that have been idle too long
   $self->{murder_t} = AE::timer 0, 60 * 60, sub {
-    my $day = 60 * 60 * 24;
-    my $now = time;
-    my %murder_table = (
-      1 => $now - ($day * 2),
-      2 => $now - ($day * 7),
-      3 => $now - ($day * 14),
-      4 => $now - ($day * 21),
-    );
-    for my $level (keys %murder_table) {
-      my $limit = $murder_table{$level};
-      $self->dbi->select('users', [qw/username/], {sub_level => $level, last_login => {'<' => $limit}, disabled => 0}, sub {
-        my ($dbh, $rows, $rv) = @_;
+    # default to one week
+    my $limit = $self->idle_limit || (60 * 60 * 24 * 7);
+    $self->dbi->select('users', [qw/username/], {last_login => {'<' => $limit}, disabled => 0}, sub {
+      my ($dbh, $rows, $rv) = @_;
 
-        for my $row (@$rows) {
-          my ($username) = @$row;
-          AE::log info => "$username is idle... shutting down";
-          $self->murder_cat($username);
-        }
-      });
-    }
+      for my $row (@$rows) {
+        my ($username) = @$row;
+        AE::log info => "$username is idle... shutting down";
+        $self->murder_cat($username);
+      }
+    });
   };
 }
 
