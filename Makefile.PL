@@ -10,6 +10,6 @@ requires 'Digest::SHA1';
 requires 'Plack::Middleware::ReverseProxy';
 requires 'Plack::Session';
 requires 'AnyEvent::DBI::Abstract';
-requires 'Path::Class Digest::HMAC';
+requires 'Path::Class';
 
 WriteAll;
