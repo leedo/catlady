@@ -8,7 +8,7 @@ that really matters is `users`, users should go in there.
   git submodule update
   cpanm -S -n --installdeps .
   cpanm -S -n --installdeps ./alice
-  mkdir -p etc/users
+  mkdir users
   cp config.example.js config.json
   vim config.json
   perl -Ilib -Ialice/lib bin/catlady config.json
