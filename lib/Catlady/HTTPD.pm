@@ -1,14 +1,12 @@
 package Catlady::HTTPD;
 
+use Alice;
 use AnyEvent;
 use Plack::Builder;
-use FindBin;
-use Digest::SHA1 qw/sha1_hex/;
-use Alice;
-use Plack::Middleware::Session;
-use Plack::Session::Store::Cache;
-use Plack::Session::State::Cookie;
 use Any::Moose;
+use Digest::SHA1 qw/sha1_hex/;
+use Plack::Middleware::Session;
+use Plack::Session::State::Cookie;
 
 extends 'Alice::HTTP::Server';
 
