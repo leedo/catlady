@@ -1,0 +1,47 @@
+#!/usr/bin/env perl
+
+use autodie;
+use JSON::XS ();
+use DBI;
+use Digest::SHA1 ();
+
+use v5.14;
+
+my %commands = (
+	adduser => \&adduser,
+);
+
+my ($command, @args) = @ARGV;
+
+if ($command and exists $commands{$command}) {
+	$commands{$command}->(@args);
+}
+else {
+	die "invalid command\n";
+}
+
+sub config {
+	my $config = do {
+		local $/;
+		open my $fh, "<", "config.json";
+		<$fh>;
+	};
+	JSON::XS::decode_json $config;
+}
+
+sub dbh {
+	DBI->connect(config->{dsn}, config->{db_user}, config->{db_pass});
+}
+
+sub adduser {
+	my ($username, $password) = @_;
+	if (!$password) {
+		$password = join "", map { ("a".."z","A".."Z",0..9)[rand 62] } 0..8;
+	}
+
+	say "$username $password";
+
+	my $salted = Digest::SHA1::sha1_hex join "-", $password, config->{salt};
+
+	dbh->do("INSERT INTO users (username, password) VALUES(?,?)", {}, $username, $salted);
+}
