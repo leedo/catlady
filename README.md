@@ -17,7 +17,7 @@ Setup catlady:
 Add a user:
 
 <pre>
-  ./bin/manage adduser <username> <password>
+  ./bin/manage adduser &lt;username&gt; &lt;password&gt;
 </pre>
 
 Run the catlady:
