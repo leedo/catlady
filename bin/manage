@@ -9,6 +9,7 @@ use v5.14;
 
 my %commands = (
 	adduser => \&adduser,
+	resetpass => \&resetpass,
 );
 
 my ($command, @args) = @ARGV;
@@ -33,15 +34,31 @@ sub dbh {
 	DBI->connect(config->{dsn}, config->{db_user}, config->{db_pass});
 }
 
+sub salt {
+	Digest::SHA1::sha1_hex join "-", shift, config->{salt};
+}
+
+sub genpass {
+	join "", map { ("a".."z","A".."Z",0..9)[rand 62] } 0..8;
+}
+
+
+sub resetpass {
+	my ($username, $password) = @_;
+	$password = genpass unless defined $password;
+	my $salted = salt $password;
+	
+	say "$username $password";
+	
+	dbh->do("UPDATE users SET password=? WHERE username=?", {}, $salted, $username);
+}
+
 sub adduser {
 	my ($username, $password) = @_;
-	if (!$password) {
-		$password = join "", map { ("a".."z","A".."Z",0..9)[rand 62] } 0..8;
-	}
+	$password = genpass unless defined $password;
+	my $salted = salt $password;
 
 	say "$username $password";
-
-	my $salted = Digest::SHA1::sha1_hex join "-", $password, config->{salt};
 
 	dbh->do("INSERT INTO users (username, password) VALUES(?,?)", {}, $username, $salted);
 }
