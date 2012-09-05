@@ -14,6 +14,12 @@ Setup catlady:
   vim config.json
 </pre>
 
+Add a user:
+
+<pre>
+  ./bin/manage adduser <username> <password>
+</pre>
+
 Run the catlady:
 
 <pre>
