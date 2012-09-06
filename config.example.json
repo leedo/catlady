@@ -3,7 +3,7 @@
   "image_prefix": "",
   "configs": "users",
   "shell_sock": "shell.sock",
-  "sharedir": "share",
+  "sharedir": "alice/share",
   "port": 9000,
   "address": "0.0.0.0",
   "idle_limit": 604800,
