@@ -1,4 +1,8 @@
-Create a new database using the provided SQL.
+Create a new database using the provided SQL:
+
+<pre>
+  sqlite3 catlady.db < catlady.sqlite.sql
+</pre>
 
 Setup catlady:
 
@@ -7,7 +11,7 @@ Setup catlady:
   cd catlady
   git submodule init
   git submodule update
-  cpanm -Snq Module::Install
+  apt-get install libmodule-install-perl libssl1.0.0
   cpanm -Snq --installdeps .
   cpanm -Snq --installdeps ./alice
   mkdir users
