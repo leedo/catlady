@@ -1,7 +1,7 @@
 Create a new database using the provided SQL:
 
 <pre>
-  sqlite3 catlady.db < catlady.sqlite.sql
+  sqlite3 catlady.db &lt; catlady.sqlite.sql
 </pre>
 
 Setup catlady:
