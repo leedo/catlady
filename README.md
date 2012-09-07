@@ -1,28 +1,28 @@
 Create a new database using the provided SQL:
 
 <pre>
-  sqlite3 catlady.db &lt; catlady.sqlite.sql
+sqlite3 catlady.db &lt; catlady.sqlite.sql
 </pre>
 
 Setup catlady:
 
 <pre>
-  git clone https://github.com/leedo/catlady.git
-  cd catlady
-  git submodule init
-  git submodule update
-  sudo apt-get install cpanminus libmodule-install-perl libssl1.0.0 libdbi-perl libev-perl
-  cpanm -Snq --installdeps .
-  cpanm -Snq --installdeps ./alice
-  mkdir users
-  cp config.example.js config.json
-  vim config.json
+git clone https://github.com/leedo/catlady.git
+cd catlady
+git submodule init
+git submodule update
+sudo apt-get install cpanminus libmodule-install-perl libssl1.0.0 libdbi-perl libev-perl
+cpanm -Snq --installdeps .
+cpanm -Snq --installdeps ./alice
+mkdir users
+cp config.example.js config.json
+vim config.json
 </pre>
 
 Add a user:
 
 <pre>
-  ./bin/manage adduser &lt;username&gt; &lt;password&gt;
+./bin/manage adduser &lt;username&gt; &lt;password&gt;
 </pre>
 
 Run the catlady:
