@@ -11,18 +11,16 @@
   "secret": "changeme",
   "domain": ".changeme.com", 
   "cookie": "changeme",
-  "dsn": "DBI:mysql:dbname=usealice;host=localhost;port=3306;mysql_auto_reconnect=1;mysql_enable_utf8=1",
+  "dsn": "DBI:SQLite:dbname=catlady.db",
   "db_attr": {
     "exec_server": 1,
-    "mysql_enable_utf8": 1,
-    "mysql_auto_reconnect": 1
   },
-  "db_user": "changeme",
-  "db_pass": "changeme",
+  "db_user": "",
+  "db_pass": "",
   "default_server":  {
-    "name": "alice",
-    "host": "irc.usealice.org",
-    "port": 6767,
-    "channels": ["#alice"]
+    "name": "freenode",
+    "host": "irc.freenode.com",
+    "port": 6667,
+    "channels": ["#perl"]
   }
 }
