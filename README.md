@@ -7,9 +7,9 @@ Setup catlady:
   cd catlady
   git submodule init
   git submodule update
-  cpanm -S -n Module::Install
-  cpanm -S -n --installdeps .
-  cpanm -S -n --installdeps ./alice
+  cpanm -Snq Module::Install
+  cpanm -Snq --installdeps .
+  cpanm -Snq --installdeps ./alice
   mkdir users
   cp config.example.js config.json
   vim config.json
