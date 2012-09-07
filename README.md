@@ -11,7 +11,7 @@ Setup catlady:
   cd catlady
   git submodule init
   git submodule update
-  apt-get install cpanminus libmodule-install-perl libssl1.0.0 libdbi-perl libev-perl
+  sudo apt-get install cpanminus libmodule-install-perl libssl1.0.0 libdbi-perl libev-perl
   cpanm -Snq --installdeps .
   cpanm -Snq --installdeps ./alice
   mkdir users
