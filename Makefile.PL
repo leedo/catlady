@@ -5,7 +5,7 @@ author 'Lee Aylward <leedo@cpan.org>';
 all_from 'lib/Catlady.pm';
 license 'perl';
 
-requires 'DBD::mysql';
+requires 'DBD::SQLite';
 requires 'Digest::SHA1';
 requires 'Plack::Middleware::ReverseProxy';
 requires 'Plack::Session';
