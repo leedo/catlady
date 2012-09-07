@@ -7,6 +7,7 @@ Setup catlady:
   cd catlady
   git submodule init
   git submodule update
+  cpanm -S -n Module::Install
   cpanm -S -n --installdeps .
   cpanm -S -n --installdeps ./alice
   mkdir users
