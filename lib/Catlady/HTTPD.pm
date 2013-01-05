@@ -58,7 +58,7 @@ sub _build_app {
   builder {
     enable "Static", path => qr{^/static/}, root => $self->assets;
     enable "ReverseProxy";
-    enable "+Catlady::Middleware::Session::Cookie",
+    enable "Session::Cookie",
       secret => $self->catlady->secret,
       session_key => $self->catlady->cookie,
       domain => $self->catlady->domain,
