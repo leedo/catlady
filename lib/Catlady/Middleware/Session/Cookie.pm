@@ -4,7 +4,7 @@ use strict;
 use parent qw(Plack::Middleware::Session::Cookie);
 
 use JSON::XS;
-use Plack::Accessor qw(serializer deserializer);
+use Plack::Util::Accessor qw(serializer deserializer);
 
 sub prepare_app {
   my $self = shift;
@@ -22,7 +22,7 @@ sub get_session {
 
   my $cookie = $self->state->get_session_id($request) or return;
 
-  my($time, $b64, $sig) = split /:/, $cookie, 3;
+  my ($b64, $sig) = split /--/, $cookie, 3;
   $self->sig($b64) eq $sig or return;
 
   my $session = $self->deserializer->($b64);
@@ -32,8 +32,10 @@ sub get_session {
 sub _serialize {
   my($self, $id, $session) = @_;
 
+  $session->{session_id} = $id;
+
   my $b64 = $self->serializer->($session);
-  join ":", $id, $b64, $self->sig($b64);
+  join "--", $b64, $self->sig($b64);
 }
 
 1;
