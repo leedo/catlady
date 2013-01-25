@@ -13,7 +13,7 @@
   "cookie": "changeme",
   "dsn": "DBI:SQLite:dbname=catlady.db",
   "db_attr": {
-    "exec_server": 1,
+    "exec_server": 1
   },
   "db_user": "",
   "db_pass": "",
