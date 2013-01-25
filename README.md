@@ -15,7 +15,7 @@ sudo apt-get install cpanminus libmodule-install-perl libssl1.0.0 libdbi-perl li
 cpanm -Snq --installdeps .
 cpanm -Snq --installdeps ./alice
 mkdir users
-cp config.example.js config.json
+cp config.example.json config.json
 vim config.json
 </pre>
 
