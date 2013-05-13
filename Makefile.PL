@@ -4,6 +4,7 @@ perl_version '5.008';
 author 'Lee Aylward <leedo@cpan.org>';
 all_from 'lib/Catlady.pm';
 license 'perl';
+version '0.10';
 
 requires 'DBD::SQLite';
 requires 'Digest::SHA1';
